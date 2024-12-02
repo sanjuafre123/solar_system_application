@@ -56,7 +56,7 @@
 <h2 align="center">1. Solar System App </h2>
 
 <div align="center">
- <video src="https://github.com/user-attachments/assets/1829afc5-0be8-4875-b64f-bb546233951f" type="video/mp4"> 
+ <video src="https://github.com/user-attachments/assets/6d8e391c-3f66-498d-8d3d-b1b880586984" type="video/mp4"> 
 </video>
 </div>
 
