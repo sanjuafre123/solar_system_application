@@ -1,4 +1,3 @@
-
 import 'package:bottom_bar_matu/bottom_bar/bottom_bar_bubble.dart';
 import 'package:bottom_bar_matu/bottom_bar_item.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +18,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late AnimationController animationController;
+  late PageController _pageController;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     animationController = AnimationController(
@@ -31,6 +30,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         seconds: 10,
       ),
     )..repeat();
+
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -38,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     HomeController homeControllerTrue = Provider.of<HomeController>(context);
     HomeController homeControllerFalse =
     Provider.of<HomeController>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -76,152 +85,150 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(children: [
-                        ...List.generate(
-                          homeControllerTrue.planetsList.length,
-                              (index) {
-                            return SizedBox(
-                              height: 461,
-                              width: 320,
-                              child: Stack(
-                                children: [
-                                  Align(
+                    SizedBox(
+                      height: 461,
+                      width: double.infinity,
+                      child: PageView.builder(
+                        controller: _pageController,
+                        itemCount: homeControllerTrue.planetsList.length,
+                        onPageChanged: (index) {
+                          homeControllerTrue.changePlanetsIndex(index);
+                        },
+                        itemBuilder: (context, index) {
+                          return Stack(
+                            children: [
+                              Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Padding(
+                                  padding:
+                                  const EdgeInsets.only(bottom: 20.0),
+                                  child: Container(
+                                    height: 350,
+                                    width: 260,
                                     alignment: Alignment.bottomCenter,
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Color(int.parse(
+                                              homeControllerTrue
+                                                  .planetsList[
+                                              index]
+                                                  .color))
+                                              .withOpacity(1),
+                                          Colors.white,
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                    ),
                                     child: Padding(
                                       padding: const EdgeInsets.only(
-                                          bottom: 20.0),
-                                      child: Container(
-                                        margin: EdgeInsets.only(left: 30),
-                                        height: 350,
-                                        width: 260,
-                                        alignment: Alignment.bottomCenter,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(10),
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              Color(int.parse(
-                                                  homeControllerTrue
-                                                      .planetsList[
-                                                  index]
-                                                      .color))
-                                                  .withOpacity(1),
-                                              Colors.white,
-                                            ],
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
+                                          left: 10, bottom: 45),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            homeControllerTrue
+                                                .planetsList[index]
+                                                .name,
+                                            style: GoogleFonts.inter(
+                                                fontSize: 23,
+                                                fontWeight:
+                                                FontWeight.w700,
+                                                color: Colors.black),
                                           ),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10, bottom: 45),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                homeControllerTrue
-                                                    .planetsList[index]
-                                                    .name,
-                                                style: GoogleFonts.inter(
-                                                    fontSize: 23,
-                                                    fontWeight:
-                                                    FontWeight.w700,
-                                                    color: Colors.black),
-                                              ),
-                                              const SizedBox(
-                                                height: 5,
-                                              ),
-                                              Text(
-                                                homeControllerTrue
-                                                    .planetsList[index]
-                                                    .description,
-                                                maxLines: 4,
-                                                style: GoogleFonts.inter(
-                                                    fontSize: 13,
-                                                    color: Colors.black),
-                                              ),
-                                              const SizedBox(
-                                                height: 15,
-                                              ),
-                                            ],
+                                          const SizedBox(
+                                            height: 5,
                                           ),
-                                        ),
+                                          Text(
+                                            homeControllerTrue
+                                                .planetsList[index]
+                                                .description,
+                                            maxLines: 4,
+                                            style: GoogleFonts.inter(
+                                                fontSize: 13,
+                                                color: Colors.black),
+                                          ),
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
-                                  Positioned(
-                                    left: 70,
-                                    child: AnimatedBuilder(
-                                      animation: animationController,
-                                      child: Hero(
-                                        tag: 'box',
-                                        child: Container(
-                                          height: 240,
-                                          width: 240,
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                                image: AssetImage(
-                                                    homeControllerTrue
-                                                        .planetsList[
-                                                    index]
-                                                        .image),
-                                                fit: BoxFit.cover),
-                                          ),
-                                        ),
-                                      ),
-                                      builder: (context, child) =>
-                                          RotationTransition(
-                                            turns: animationController,
-                                            child: child,
-                                          ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    top: 422,
-                                    left: 149,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        homeControllerFalse
-                                            .changePlanetsIndex(index);
-                                        Navigator.of(context).push(
-                                            PageTransition(
-                                                duration: const Duration(
-                                                    milliseconds: 500),
-                                                child:
-                                                const DetailsScreen(),
-                                                type: PageTransitionType
-                                                    .bottomToTop));
-                                      },
-                                      child: Container(
-                                        height: 40,
-                                        width: 40,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                              color: Colors.white),
-                                          color: Color(int.parse(
-                                              homeControllerTrue
-                                                  .planetsList[index]
-                                                  .color)),
-                                        ),
-                                        child: const Icon(
-                                          Icons.arrow_forward,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            );
-                          },
-                        ),
-                      ]),
+                              Positioned(
+                                left: 80,
+                                child: AnimatedBuilder(
+                                  animation: animationController,
+                                  child: Hero(
+                                    tag: 'box',
+                                    child: Container(
+                                      height: 240,
+                                      width: 240,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            image: AssetImage(
+                                                homeControllerTrue
+                                                    .planetsList[index]
+                                                    .image),
+                                            fit: BoxFit.cover),
+                                      ),
+                                    ),
+                                  ),
+                                  builder: (context, child) =>
+                                      RotationTransition(
+                                        turns: animationController,
+                                        child: child,
+                                      ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 422,
+                                left: 175,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    homeControllerFalse
+                                        .changePlanetsIndex(index);
+                                    Navigator.of(context).push(
+                                      PageTransition(
+                                        duration: const Duration(
+                                            milliseconds: 500),
+                                        child: const DetailsScreen(),
+                                        type: PageTransitionType
+                                            .bottomToTop,
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    height: 40,
+                                    width: 40,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: Colors.white),
+                                      color: Color(int.parse(
+                                          homeControllerTrue
+                                              .planetsList[index]
+                                              .color)),
+                                    ),
+                                    child: const Icon(
+                                      Icons.arrow_forward,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
